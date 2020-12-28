@@ -1,6 +1,13 @@
+const AWS = require("aws-sdk");
+const dynamodb = new AWS.DynamoDB({ apiVersion: "2012-08-10" });
+const tableName = "transactions-api";
+
 exports.handler = async (event) => {
     let msg = "Bad request - Requested resource is not available";
     let response = {
+        headers: {
+            "Content-type": "application/json"  
+        },
         statusCode: 400
     };
     let operation = null;
@@ -20,9 +27,33 @@ exports.handler = async (event) => {
                     msg = "Bad request - Required params are missing";
                     response.statusCode = 400;
                 } else {
-                    // TODO - save the transaction to the DB
-                    msg = "Successfully saved transaction";
+                    const saveParams = {
+                        TableName: tableName,
+                        Item: {
+                            "id": {
+                                S: Math.floor(Math.random() * 10000).toString()
+                            },
+                            "payer": {
+                                S: body.payer
+                            },
+                            "receiver": {
+                                S: body.receiver
+                            },
+                            "product": {
+                                S: body.product
+                            },
+                            "total": {
+                                N: body.total.toString()
+                            }
+                        }
+                    };
+                    
+                    await dynamodb.putItem(saveParams).promise();
+                    
+                    response.body = JSON.stringify(saveParams.Item);
                     response.statusCode = 201;
+                    
+                    return response;
                 }
             }
         } else if (method === "GET") {
@@ -34,16 +65,36 @@ exports.handler = async (event) => {
                     msg = "Bad request - Transaction id is invalid";
                     response.statusCode = 400;
                 } else {
-                    // TODO - get transaction by id from DB
-                    msg = "Successfully sent transaction record by id";
+                    const getItemParams = {
+                        TableName: tableName,
+                        Key: {
+                            "id": {
+                                S: transactionId
+                            }
+                        }
+                    };
+                    
+                    const transaction = await dynamodb.getItem(getItemParams).promise();
+                    
+                    response.body = JSON.stringify(transaction.Item);
                     response.statusCode = 200;
+                    
+                    return response;
                 }
             } else if (path === "/transactions-api/v1/transaction") {
                 operation = "getting list of transactions";
                 console.log("GET list of transactions");
-                // TODO
-                msg = "Successfully sent list of transactions";
+                
+                const scanParams = {
+                    TableName: tableName
+                };
+                
+                const transactions = await dynamodb.scan(scanParams).promise();
+                
+                response.body = JSON.stringify(transactions.Items);
                 response.statusCode = 200;
+                
+                return response;
             }
         }
         

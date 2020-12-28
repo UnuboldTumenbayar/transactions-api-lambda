@@ -11,10 +11,9 @@
             "Action": [
                 "dynamodb:PutItem",
                 "dynamodb:GetItem",
-                "dynamodb:Scan",
-                "dynamodb:Query"
+                "dynamodb:Scan"
             ],
-            "Resource": "*"
+            "Resource": "arn:aws:dynamodb:us-east-1:<<account-id>>:table/<<table-name>>"
         }
     ]
   },
@@ -51,5 +50,6 @@
             ]
         }
     ]
-  }
+  },
+  "DynamoDBScanCLI": "aws dynamodb scan --table-name <<table-name>>"
 }
