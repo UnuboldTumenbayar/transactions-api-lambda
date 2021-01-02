@@ -3,6 +3,9 @@ const dynamodb = new AWS.DynamoDB({ apiVersion: "2012-08-10" });
 const tableName = "transactions-api";
 
 exports.handler = async (event) => {
+    
+    console.log("Request received: " + JSON.stringify(event));
+    
     let msg = "Bad request - Requested resource is not available";
     let response = {
         headers: {
@@ -11,10 +14,8 @@ exports.handler = async (event) => {
         statusCode: 400
     };
     let operation = null;
-    const method = event.requestContext.http.method;
-    const path = event.rawPath;
-    
-    console.log("Request received: " + JSON.stringify(event));
+    const method = event.httpMethod;
+    const path = event.path;
     
     try {
         if (method === "POST") {
