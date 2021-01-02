@@ -3,9 +3,6 @@ const dynamodb = new AWS.DynamoDB({ apiVersion: "2012-08-10" });
 const tableName = "transactions-api";
 
 exports.handler = async (event) => {
-    
-    console.log("Request received: " + JSON.stringify(event));
-    
     let msg = "Bad request - Requested resource is not available";
     let response = {
         headers: {
@@ -17,9 +14,11 @@ exports.handler = async (event) => {
     const method = event.httpMethod;
     const path = event.path;
     
+    console.log("Request received: " + JSON.stringify(event));
+    
     try {
         if (method === "POST") {
-            if (path === "/transactions-api/v1/transaction") {
+            if (path === "/transaction") {
                 operation = "saving transaction";
                 const body = JSON.parse(event.body);
                 console.log("POST transaction");
@@ -58,7 +57,7 @@ exports.handler = async (event) => {
                 }
             }
         } else if (method === "GET") {
-            if (event.pathParameters && path.includes("/transactions-api/v1/transaction")) {
+            if (event.pathParameters && path.includes("/transaction")) {
                 operation = "getting transaction by id";
                 const transactionId = event.pathParameters.id;
                 console.log("GET transaction by id");
@@ -82,7 +81,7 @@ exports.handler = async (event) => {
                     
                     return response;
                 }
-            } else if (path === "/transactions-api/v1/transaction") {
+            } else if (path === "/transaction") {
                 operation = "getting list of transactions";
                 console.log("GET list of transactions");
                 
