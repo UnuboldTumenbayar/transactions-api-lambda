@@ -2,6 +2,12 @@
   "name": "TransactionsApiRole",
   "description": "IAM role for the mock transactions API lambda.",
   "tutorial": "Ground to Cloud for Mongolian Software Development Engineers",
+  "G2C_1.6_Securing_an_API": [
+    { "prereq": "Configure AWS CLI up front. For example, provide AWS tokens as env vars" },
+    { "cli_to_signup": "aws cognito-idp sign-up --client-id <<client_id>> --username <<username>> --password <<userpassword>> --user-attributes Name=email,Value=<<useremail>> --region <<region>>" },
+    { "cli_to_validate": "aws cognito-idp admin-confirm-sign-up --user-pool-id <<pool_id>> --username <<username>> --region <<region>>" },
+    { "cli_to_login": "aws cognito-idp initiate-auth --auth-flow USER_PASSWORD_AUTH --client-id <<client_id>> --auth-parameters USERNAME=<<username>>,PASSWORD=<<userpassword>> --region <<region>>" }
+  ],
   "MockDynamoPolicy": {
     "Version": "2012-10-17",
     "Statement": [
